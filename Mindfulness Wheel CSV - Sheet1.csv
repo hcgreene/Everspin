@@ -1,0 +1,7 @@
+Input,Inner motor direction,Number of rotations,Steps,Period,Outer motor direction,Number of rotations,Steps,Period,Duration,LED Numerical,LED Color,Mindfulness Message Number
+clarify my future,CW,1,200,15,CCW,1,200,15,15,"[100, 0, 0]",Red,1
+clarify my present,CW,2,400,15,CW,2,400,15,30,"[0, 100, 0]",Green,2
+clarify my past,CW,3,600,5,CCW,3,600,5,15,"[0, 0, 100]",Blue,3
+recall my future,CCW,1,200,30,CW,3,600,10,30,"[100, 0, 0]",Red,4
+recall my present,CCW,2,400,7.5,CCW,2,400,7.5,15,"[0, 100, 0]",Green,5
+recall my past,CCW,3,600,10,CW,1,200,30,30,"[0, 0, 100]",Blue,6
