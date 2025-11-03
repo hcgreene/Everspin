@@ -1,1 +1,1 @@
-# PHYS351-Mindfulness-Wheel
+# Everspin
