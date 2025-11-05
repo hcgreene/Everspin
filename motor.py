@@ -2,7 +2,6 @@
 
 #import RPi.GPIO as GPIO
 from time import sleep
-import time
 
 class motor:
 
@@ -28,7 +27,7 @@ class motor:
         GPIO.output([self.a1, self.a2, self.b1, self.b2], [0, 1, 0, 1])
         sleep(wait)
         '''
-        print("cycling clockwise")
+        return
 
     def cycleccw(self, wait):
         '''
@@ -41,7 +40,7 @@ class motor:
         GPIO.output([self.a1, self.a2, self.b1, self.b2], [1, 0, 0, 1])
         sleep(wait)
         '''
-        print("cycling counter clockwise")
+        return
 
     def rotatecw(self, rotations, duration):
         for i in range(50*rotations):
