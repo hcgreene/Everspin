@@ -8,6 +8,7 @@ Everspin consists of an inner motor that represents the self and an outer motor 
 
 ### Dependencies
 * Python 3.13.0
+  * Libraries: RPi.GPIO, NumPy, time, guizero
 
 ### Installing
 Install main.py, motor.py, and light.py to the same directory. 
