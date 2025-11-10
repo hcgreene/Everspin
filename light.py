@@ -4,23 +4,69 @@
 from time import sleep
 
 class light:
-    def __init__(self, red, green, blue):
-        self.r = red
-        self.g = green
-        self.b = blue
+    frequency = 50
+    s = 0.001
 
-    def red():
+    def __init__(self, red, green, blue):
+        GPIO.setmode(GPIO.BCM)
+        GPIO.setup(red, GPIO.OUT)
+        GPIO.setup(green, GPIO.OUT)
+        GPIO.setup(blue, GPIO.OUT)
+
+        self.r = GPIO.PWM(red, self.frequency)
+        self.g = GPIO.PWM(green, self.frequency)
+        self.b = GPIO.PWM(blue, self.frequency)
+
+        self.r.start(0)
+        self.g.start(0)
+        self.b.start(0)
+
+        self.on = 'none'
+
+
+    def off(self):
+        #Check the self.on variable to see what is on currently and fade it off
+        
+        match self.on:
+            case 'red':
+                for i in range(100):
+                    self.r.ChangeDutyCycle(100-i)
+                    sleep(self.s)
+            case 'green':
+                for i in range(100):
+                    self.g.ChangeDutyCycle(100-i)
+                    sleep(self.s)
+            case 'blue':
+                for i in range(100):
+                    self.b.ChangeDutyCycle(100-i)
+                    sleep(self.s)
+
+        self.r.ChangeDutyCycle(0)
+        self.g.ChangeDutyCycle(0)
+        self.b.ChangeDutyCycle(0)
+        self.on = 'none' 
+        #Ensure all of the lights are acutally off and update the self.on variable to reflect that they're all off
+    
+    def red(self):
         #make sure everything is off and then fade red in
-        return
+        self.off()
+        for i in range(100):
+            self.r.ChangeDutyCycle(i)
+            sleep(self.s)
+        self.on = 'red'
     
-    def green():
+    def green(self):
         #make sure everything is off and then fade green in
-        return
+        self.off()
+        for i in range(100):
+            self.g.ChangeDutyCycle(i)
+            sleep(self.s)
+        self.on = 'green'
     
-    def blue():
+    def blue(self):
         #make sure everything is off and then fade blue in
-        return
-    
-    def off():
-        #fade all of the lights off
-        return
+        self.off()
+        for i in range(100):
+            self.b.ChangeDutyCycle(i)
+            sleep(self.s)
+        self.on = 'blue'
