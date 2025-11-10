@@ -4,7 +4,7 @@
 from time import sleep
 
 class light:
-    frequency = 50
+    frequency = 100
     s = 0.001
 
     def __init__(self, red, green, blue):
