@@ -11,12 +11,12 @@ a2i = 27
 b1i = 22
 b2i = 23
 
-a1o = 19
-a2o = 13
+a1o = 16
+a2o = 26
 b1o = 5
 b2o = 6
 
-red = 26
+red = 13
 green = 25
 blue = 12
 
@@ -67,7 +67,7 @@ def trythreading():
 
 def testmotor():
     start = time.time()
-    m.rotateccw(5, 10)
+    mtwo.rotateccw(5, 10)
     duration = time.time()-start
     print(duration)
 
@@ -81,8 +81,7 @@ def testleds():
     time.sleep(2)
     l.off()
 
-#testmotor()
+testmotor()
 #trythreading()
-lights()
 
 GPIO.cleanup()
