@@ -7,6 +7,7 @@ from guizero import App, PushButton
 # Raspberry Pi IP Address 10.160.137.201
 
 from motor import motor
+from light import light
 
 #This file will be the main program for the mindfullness wheel. It will launch the GUI, control the motors, and control the microphone
 
@@ -15,18 +16,19 @@ a1i = 17
 a2i = 27
 b1i = 22
 b2i = 23
-si = 0
+
+a1o = 19
+a2o = 13
+b1o = 5
+b2o = 6
+
+red = 26
+green = 25
+blue = 12
 
 innermotor = motor(a1i, a2i, b1i, b2i)
-
-#pin numbers for outer motor
-a1o = 0
-a2o = 0
-b1o = 0
-b2o = 0
-so = 0
-
-#outermotor = motor(a1o, a2o, b1o, b2o)
+outermotor = motor(a1o, a2o, b1o, b2o)
+l = light(red, green, blue)
 
 def clockwise():
     print("Rotating")
