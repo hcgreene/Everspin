@@ -11,13 +11,13 @@ class motor:
         self.a2 = a2
         self.b1 = b1
         self.b2 = b2
-        self.s = s
         GPIO.setup([a1, a2, b1, b2], GPIO.OUT)
+        GPIO.setup(16, GPIO.OUT)
         GPIO.output([a1, a2, b1, b2], [0, 0, 0, 0])
+        print("Setup complete")
 
     def cyclecw(self, wait):
         #This function does four steps 
-        
         GPIO.output([self.a1, self.a2, self.b1, self.b2], [1, 0, 0, 1])
         sleep(wait)
         GPIO.output([self.a1, self.a2, self.b1, self.b2], [1, 0, 1, 0])
@@ -42,9 +42,11 @@ class motor:
         return
 
     def rotatecw(self, rotations, duration):
+        GPIO.output(16, GPIO.HIGH)
         for i in range(50*rotations):
-            self.cyclecw(duration/200)
+            self.cyclecw(duration/(200*rotations))
+        GPIO.output(16, GPIO.LOW)
 
     def rotateccw(self, rotations, duration):
         for i in range(50*rotations):
-            self.cycleccw(duration/200)
+            self.cycleccw(duration/(200*rotations))

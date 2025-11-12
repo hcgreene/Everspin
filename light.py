@@ -4,7 +4,7 @@ from time import sleep
 
 class light:
     frequency = 100
-    s = 0.001
+    s = 0.01
 
     def __init__(self, red, green, blue):
         GPIO.setmode(GPIO.BCM)

@@ -29,14 +29,23 @@ so = 0
 #outermotor = motor(a1o, a2o, b1o, b2o)
 
 def clockwise():
-    innermotor.rotatecw(3, 30)
     print("Rotating")
+    innermotor.rotatecw(3, 10)
+    print("Done rotating?")
 
 def counterclockwise():
     innermotor.rotateccw(3, 30)
     print("Rotating")
-
+'''
 app = App(title="Hello world")
 button = PushButton(app, text="clockwise", command=clockwise)
 button = PushButton(app, text="counter clockwise", command = counterclockwise())
 app.display()
+'''
+GPIO.setmode(GPIO.BCM)
+GPIO.setup(16, GPIO.OUT)
+GPIO.output(16, GPIO.HIGH)
+sleep(5)
+GPIO.cleanup()
+
+#clockwise()
