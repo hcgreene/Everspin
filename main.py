@@ -11,13 +11,13 @@ from motor import motor
 #This file will be the main program for the mindfullness wheel. It will launch the GUI, control the motors, and control the microphone
 
 #pin numbers for inner motor
-a1i = 0
-a2i = 0
-b1i = 0
-b2i = 0
+a1i = 17
+a2i = 27
+b1i = 22
+b2i = 23
 si = 0
 
-innermotor = motor(a1i, a2i, b1i, b2i, si)
+innermotor = motor(a1i, a2i, b1i, b2i)
 
 #pin numbers for outer motor
 a1o = 0
@@ -26,13 +26,17 @@ b1o = 0
 b2o = 0
 so = 0
 
-outermotor = motor(a1o, a2o, b1o, b2o, so)
+#outermotor = motor(a1o, a2o, b1o, b2o)
 
-def move():
+def clockwise():
     innermotor.rotatecw(3, 30)
-    outermotor.rotateccw(4, 30)
+    print("Rotating")
+
+def counterclockwise():
+    innermotor.rotateccw(3, 30)
     print("Rotating")
 
 app = App(title="Hello world")
-button = PushButton(app, text="move", command=move)
+button = PushButton(app, text="clockwise", command=clockwise)
+button = PushButton(app, text="counter clockwise", command = counterclockwise())
 app.display()
