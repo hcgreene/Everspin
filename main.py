@@ -3,6 +3,9 @@ import numpy as np
 #import RPi.GPIO as GPIO
 from guizero import App, PushButton
 
+
+# Raspberry Pi IP Address 10.160.137.201
+
 from motor import motor
 
 #This file will be the main program for the mindfullness wheel. It will launch the GUI, control the motors, and control the microphone
