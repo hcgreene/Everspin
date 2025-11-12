@@ -67,7 +67,7 @@ def trythreading():
 
 def testmotor():
     start = time.time()
-    mtwo.rotateccw(5, 10)
+    m.rotateccw(5, 10)
     duration = time.time()-start
     print(duration)
 
@@ -81,7 +81,8 @@ def testleds():
     time.sleep(2)
     l.off()
 
-testmotor()
-#trythreading()
+#
+# testmotor()
+trythreading()
 
 GPIO.cleanup()
