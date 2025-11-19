@@ -95,5 +95,5 @@ def main():
         GPIO.cleanup()
 
 app = App(title="Everspin")
-button = PushButton(app, text="start", image="everspin poster-2.png", command=printwords)
+button = PushButton(app, text="start", image="everspin poster-2.png", command=main)
 app.display()
