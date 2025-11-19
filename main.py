@@ -63,6 +63,9 @@ def motorsandlights():
     t3.join()
     print('Done!')
 
+def printwords():
+    print("testing testing!")
+
 def main():
     try:
         while(True):
@@ -92,5 +95,5 @@ def main():
         GPIO.cleanup()
 
 app = App(title="Everspin")
-button = PushButton(app, text="clockwise", command=main)
+button = PushButton(app, text="start", image="everspin poster-2.png", command=printwords)
 app.display()
