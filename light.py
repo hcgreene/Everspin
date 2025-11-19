@@ -69,3 +69,13 @@ class light:
             self.b.ChangeDutyCycle(i)
             sleep(self.s)
         self.on = 'blue'
+
+    def lights(self):
+        sleep(0.5)
+        self.red()
+        sleep(2)
+        self.green()
+        sleep(2)
+        self.blue()
+        sleep(2)
+        self.off()
