@@ -1,7 +1,7 @@
 import time
 import numpy as np
 import RPi.GPIO as GPIO
-from guizero import App, PushButton
+from guizero import App, PushButton, Text
 import threading
 
 
@@ -11,6 +11,10 @@ from motor import motor
 from light import light
 
 #This file will be the main program for the mindfullness wheel. It will launch the GUI, control the motors, and control the microphone
+
+#Flags
+updating = False
+motorsrunning = False
 
 a1i = 17
 a2i = 27
@@ -48,77 +52,98 @@ def firstmotorcounterclockwise(rotations, duration):
     m.rotateccw(rotations, duration)
 
 def secondmotor(rotations, duration):
-    mtwo.rotateccw(rotations, duration)
+    #mtwo.rotateccw(rotations, duration)
+    pass
 
 def lights():
     l.lights()
 
 def closedistance():
     t1 = threading.Thread(target=firstmotorclockwise, args = (2, 4,))
-    #t2 = threading.Thread(target=secondmotor, args = (8, 10,))
+    t2 = threading.Thread(target=secondmotor, args = (8, 10,))
     t3 = threading.Thread(target=lights, args = ())
 
     t1.start()
-    #t2.start()
+    t2.start()
     t3.start()
-    t1.join()
-    #t2.join()
-    t3.join()
+    threading.Thread(target=wait_for_threads, args=(t1, t2, t3)).start()
     print('Done!')
 
 def fardistance():
     t1 = threading.Thread(target=firstmotorcounterclockwise, args = (2, 4,))
-    #t2 = threading.Thread(target=secondmotor, args = (8, 10,))
+    t2 = threading.Thread(target=secondmotor, args = (8, 10,))
     t3 = threading.Thread(target=lights, args = ())
 
     t1.start()
-    #t2.start()
+    t2.start()
     t3.start()
-    t1.join()
-    #t2.join()
-    t3.join()
+    threading.Thread(target=wait_for_threads, args=(t1, t2, t3)).start()
     print('Done!')
 
 def printwords():
     print("testing testing!")
 
-def main():
-    #This code needs to be reworked so that the GUI still works and responds to input
-    try:
-        while(True):
-            GPIO.output(trigger, 1)
-            for i in range(180):
-                pass
-            GPIO.output(trigger, 0)
+def getdistance():
+    GPIO.output(trigger, 1)
+    for i in range(180):
+        pass
+    GPIO.output(trigger, 0)
 
-            while(GPIO.input(echo) == 0):
-                pass
+    while(GPIO.input(echo) == 0):
+        pass
 
-            if(GPIO.input(echo) == 1):
-                start = time.time()
-                
-            while(GPIO.input(echo) == 1):
-                end = time.time()
+    if(GPIO.input(echo) == 1):
+        start = time.time()
+        
+    while(GPIO.input(echo) == 1):
+        end = time.time()
 
-            duration = end-start
+    duration = end-start
 
-            distance = soundspeed*duration/2 
-            
+    distance = soundspeed*duration/2
+    return distance
+
+def updatedistance():
+    if updating:
+        distance = getdistance()
+        distance_text.value = f"Distance: {distance} m"
+        
+        global motorsrunning
+        if(not motorsrunning):
             if(distance < 0.25):
                 print(f"close distance: {distance:.1f} m")
+                motorsrunning = True
                 closedistance()
 
             elif(distance < 0.5):
                 print(f"medium distance: {distance:.1f} m")
+                motorsrunning = True
                 fardistance()
 
+        app.after(500, updatedistance)
 
-            time.sleep(.5)
-    except KeyboardInterrupt:
-        GPIO.cleanup()
+
+def wait_for_threads(t1, t2, t3):
+    t1.join()
+    t2.join()
+    t3.join()
+    global motorsrunning
+    motorsrunning = False
+
+def stopupdating():
+    global updating
+    updating = False
+
+def startupdating():
+    global updating
+    updating = True
+    updatedistance()
 
 app = App(title="Everspin")
-button = PushButton(app, text="start", image="everspin poster-2.png", command=main)
+distance_text = Text(app, text="Distance: -- cm", size=20)
+button = PushButton(app, text="start", command=startupdating)
+button = PushButton(app, text="stop", command=stopupdating)
+app.when_closed = lambda: GPIO.cleanup()
 app.display()
 
 #TODO need to update the GUI to have the picture and then have two separate buttons one to start and one to end the session and export the CSV
