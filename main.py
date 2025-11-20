@@ -41,8 +41,11 @@ time.sleep(2)
 
 soundspeed = 343
 
-def firstmotor(rotations, duration):
+def firstmotorclockwise(rotations, duration):
     m.rotatecw(rotations,duration)
+
+def firstmotorcounterclockwise(rotations, duration):
+    m.rotateccw(rotations, duration)
 
 def secondmotor(rotations, duration):
     mtwo.rotateccw(rotations, duration)
@@ -50,8 +53,21 @@ def secondmotor(rotations, duration):
 def lights():
     l.lights()
 
-def motorsandlights():
-    t1 = threading.Thread(target=firstmotor, args = (5, 10,))
+def closedistance():
+    t1 = threading.Thread(target=firstmotorclockwise, args = (2, 4,))
+    #t2 = threading.Thread(target=secondmotor, args = (8, 10,))
+    t3 = threading.Thread(target=lights, args = ())
+
+    t1.start()
+    #t2.start()
+    t3.start()
+    t1.join()
+    #t2.join()
+    t3.join()
+    print('Done!')
+
+def fardistance():
+    t1 = threading.Thread(target=firstmotorcounterclockwise, args = (2, 4,))
     #t2 = threading.Thread(target=secondmotor, args = (8, 10,))
     t3 = threading.Thread(target=lights, args = ())
 
@@ -67,6 +83,7 @@ def printwords():
     print("testing testing!")
 
 def main():
+    #This code needs to be reworked so that the GUI still works and responds to input
     try:
         while(True):
             GPIO.output(trigger, 1)
@@ -87,9 +104,15 @@ def main():
 
             distance = soundspeed*duration/2 
             
-            if(distance < 0.5):
-                print(f"{distance:.1f} m {distance*100:.1f} cm {distance*1000:.1f} mm {distance*100*0.394:.1f} in")
-                motorsandlights()
+            if(distance < 0.25):
+                print(f"close distance: {distance:.1f} m")
+                closedistance()
+
+            elif(distance < 0.5):
+                print(f"medium distance: {distance:.1f} m")
+                fardistance()
+
+
             time.sleep(.5)
     except KeyboardInterrupt:
         GPIO.cleanup()
@@ -97,3 +120,5 @@ def main():
 app = App(title="Everspin")
 button = PushButton(app, text="start", image="everspin poster-2.png", command=main)
 app.display()
+
+#TODO need to update the GUI to have the picture and then have two separate buttons one to start and one to end the session and export the CSV

@@ -73,9 +73,9 @@ class light:
     def lights(self):
         sleep(0.5)
         self.red()
-        sleep(2)
+        sleep(0.5)
         self.green()
-        sleep(2)
+        sleep(0.5)
         self.blue()
-        sleep(2)
+        sleep(0.5)
         self.off()
