@@ -11,14 +11,16 @@ Everspin consists of an inner motor that represents the self and an outer motor 
   * Libraries: RPi.GPIO, NumPy, time, guizero, threading
 
 ### Installing
-Install main.py, motor.py, and light.py to the same directory. 
+Install main.py, distancesensor.py, motor.py, and light.py to the same directory. 
 
 ### Executing program
-To use the program, run the main.py file. This will launch the GUI which has a button labeled 'move' which calls the functions in motor.py to rotate the motors.
+To use the program, run the main.py file. This will launch the GUI which has a button labeled 'start' which will tell the distance sensor to start reporting distances. When it senses a hand wave, motor rotation and LED flashing will begin.
 
 The motor.py file is the driver for the stepper motors. It contains functions for rotating clockwise and counter clockwise.
 
 The light.py file is the driver for the RGB LEDs. There are functions for turning the lights red, green, blue, and off.
+
+The distancesensor.py file has code for communication with the HC-SR04 ultrasound distance sensor, which continuously reports distance to the Pi while the device is active. 
 
 ## Authors
 
@@ -34,5 +36,8 @@ The light.py file is the driver for the RGB LEDs. There are functions for turnin
   * Initial release, pseudo test code for motors and RGB LEDs
 * v0.2 (11/12/25)
   * Added threading to rotate two motors and flash the LEDs simultaneously
-  * Filled in pseudo code with GPIO pins (subject to change)
+  * Filled in pseudo code with adjustable GPIO pins
   * Created testing.py file to demonstrate control of all components with various test cases
+* v0.3 (11/24/25)
+  * Added distancesensor.py with code to activate the main program based on distance from a distance sensor
+  * Updated GUI with Everspin poster and start/stop buttons
