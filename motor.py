@@ -1,4 +1,4 @@
-#motor driver
+#Motor driver file. Defines simple functionalities for controlling the motor
 
 import RPi.GPIO as GPIO
 from time import sleep
