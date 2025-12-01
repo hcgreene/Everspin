@@ -21,7 +21,7 @@ message2 = "You did the best you could with the understanding and tools you had 
 message3 = "I'm here with you. Let's take things one breath, one step at a time."
 message4 = "It's okay to be a work in progress. Your present moments don't have to be perfect to be meaningful."
 message5 = "I'm proud of you. The choices you're making now are building the life I get to enjoy."
-message6 = "You dono't need to predict the path. Just trust that you'll grow into the strength and clarity needed when the time comes."
+message6 = "You don't need to predict the path. Just trust that you'll grow into the strength and clarity needed when the time comes."
 
 a1i = 17
 a2i = 27
@@ -59,12 +59,10 @@ def firstmotorcounterclockwise(rotations, duration):
     m.rotateccw(rotations, duration)
 
 def secondmotorclockwise(rotations, duration):
-    #mtwo.rotatecw(rotations, duration)
-    pass
+    mtwo.rotatecw(rotations, duration)
 
 def secondmotorcounterclockwise(rotations, duration):
-    #mtwo.rotateccw(rotations, duration)
-    pass
+    mtwo.rotateccw(rotations, duration)
 
 def lights():
     l.lights()
@@ -80,7 +78,7 @@ def blue():
 
 def closedistance():
     t1 = threading.Thread(target=firstmotorclockwise, args = (2, 4,))
-    t2 = threading.Thread(target=secondmotorcouterclockwise, args = (8, 10,))
+    t2 = threading.Thread(target=secondmotorcounterclockwise, args = (8, 10,))
     t3 = threading.Thread(target=lights, args = ())
 
     t1.start()
@@ -101,12 +99,12 @@ def fardistance():
     print('Done!')
 
 #Start the threads for running the two motors and the LEDs
-def activate(t1, t2, t3):
+def activate(t1, t2, t3, message):
     mindfulness_message.value = "Wheels are turning"
     t1.start()
     t2.start()
     t3.start()
-    threading.Thread(target=wait_for_threads, args=(t1, t2, t3)).start()
+    threading.Thread(target=wait_for_threads, args=(t1, t2, t3, message)).start()
 
 #How the wheel should behave when activated at the first height
 #The first motor (inner) will rotate 10 times counter clockwise
@@ -118,8 +116,7 @@ def behavior1():
     t2 = threading.Thread(target=secondmotorclockwise, args = (5, 30,))
     t3 = threading.Thread(target=blue, args = ())
 
-    activate(t1, t2, t3)
-    mindfulness_message.value = message1
+    activate(t1, t2, t3, message1)
 
 #Second height
 #Inner motor 5 times counter clockwise
@@ -131,8 +128,7 @@ def behavior2():
     t2 = threading.Thread(target=secondmotorclockwise, args = (10, 30,))
     t3 = threading.Thread(target=blue, args = ())
 
-    activate(t1, t2, t3)
-    mindfulness_message.value = message2
+    activate(t1, t2, t3, message2)
 
 #Third height
 #Inner motor 5 times clockwise
@@ -144,8 +140,7 @@ def behavior3():
     t2 = threading.Thread(target=secondmotorcounterclockwise, args = (10, 30,))
     t3 = threading.Thread(target=green, args = ())
 
-    activate(t1, t2, t3)
-    mindfulness_message.value = message3
+    activate(t1, t2, t3, message3)
 
 #Fourth height
 #Inner motor 10 times clockwise
@@ -157,8 +152,7 @@ def behavior4():
     t2 = threading.Thread(target=secondmotorcounterclockwise, args = (5, 30,))
     t3 = threading.Thread(target=green, args = ())
 
-    activate(t1, t2, t3)
-    mindfulness_message.value = message4
+    activate(t1, t2, t3, message4)
 
 #Fifth height
 #Inner motor 10 times clockwise
@@ -170,8 +164,7 @@ def behavior5():
     t2 = threading.Thread(target=secondmotorclockwise, args = (5, 30,))
     t3 = threading.Thread(target=red, args = ())
 
-    activate(t1, t2, t3)
-    mindfulness_message.value = message5
+    activate(t1, t2, t3, message5)
 
 #Sixth height
 #Inner motor 5 times counter clockwise
@@ -183,8 +176,7 @@ def behavior6():
     t2 = threading.Thread(target=secondmotorcounterclockwise, args = (10, 30,))
     t3 = threading.Thread(target=red, args = ())
 
-    activate(t1, t2, t3)
-    mindfulness_message.value = message6
+    activate(t1, t2, t3, message6)
 
 def getdistance():
     GPIO.output(trigger, 1)
@@ -245,12 +237,14 @@ def updatedistance():
         app.after(500, updatedistance)
 
 
-def wait_for_threads(t1, t2, t3):
+def wait_for_threads(t1, t2, t3, message):
     t1.join()
     t2.join()
     t3.join()
     global motorsrunning
     motorsrunning = False
+    mindfulness_message.value = message
+    l.off()
 
 def stopupdating():
     global updating
@@ -261,11 +255,16 @@ def startupdating():
     updating = True
     updatedistance()
 
+def do_this_when_closed():
+    GPIO.cleanup()
+    app.destroy()
+
+
 app = App(title="Everspin")
 button = PushButton(app, text="start", command=startupdating)
 button = PushButton(app, text="stop", command=stopupdating)
 mindfulness_message = Text(app, text="Welcome to Everspin", size=20)
-app.when_closed = lambda: GPIO.cleanup()
+app.when_closed = do_this_when_closed
 app.display()
 
 #TODO need to update the GUI to have the picture and then have two separate buttons one to start and one to end the session and export the CSV
