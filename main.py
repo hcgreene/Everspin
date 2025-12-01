@@ -16,12 +16,12 @@ from light import light
 updating = False
 motorsrunning = False
 
-message1 = "message 1"
-message2 = "message 2"
-message3 = "message 3"
-message4 = "message 4"
-message5 = "message 5"
-message6 = "message 6"
+message1 = "Thank you for carrying everything I couldn't. You've taken me farther than I ever imagined."
+message2 = "You did the best you could with the understanding and tools you had then. Growth doesn't erase you; it honors you."
+message3 = "I'm here with you. Let's take things one breath, one step at a time."
+message4 = "It's okay to be a work in progress. Your present moments don't have to be perfect to be meaningful."
+message5 = "I'm proud of you. The choices you're making now are building the life I get to enjoy."
+message6 = "You dono't need to predict the path. Just trust that you'll grow into the strength and clarity needed when the time comes."
 
 a1i = 17
 a2i = 27
