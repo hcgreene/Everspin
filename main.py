@@ -17,6 +17,8 @@ from light import light
 updating = False
 motorsrunning = False
 
+time = 0
+
 message1 = "Thank you for carrying everything I couldn't. You've taken me farther than I ever imagined."
 message2 = "You did the best you could with the understanding and tools you had then. Growth doesn't erase you; it honors you."
 message3 = "I'm here with you. Let's take things one breath, one step at a time."
@@ -244,6 +246,7 @@ def startupdating():
 
 #Runs GPIO.cleanup() and ends the program
 def do_this_when_closed():
+    #This should additionally export the CSV file
     GPIO.cleanup()
     app.destroy()
 
