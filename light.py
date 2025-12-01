@@ -1,5 +1,6 @@
-import RPi.GPIO as GPIO
+#This is a class file for the RGBLED lights. It defines some simple functionalities for turning the lights on and off.
 
+import RPi.GPIO as GPIO
 from time import sleep
 
 class light:
@@ -71,6 +72,7 @@ class light:
         self.on = 'blue'
 
     def lights(self):
+        #Run the lights through a series of red green and blue
         sleep(0.5)
         self.red()
         sleep(0.5)

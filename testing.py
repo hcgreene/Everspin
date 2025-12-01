@@ -1,3 +1,5 @@
+#This file is kept in the repository for reference and documentation of the development process but is not directly revelant in the final product
+
 import time
 import numpy as np
 import RPi.GPIO as GPIO
