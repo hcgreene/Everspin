@@ -28,12 +28,12 @@ a2i = 27
 b1i = 22
 b2i = 23
 
-a1o = 16 #no!
-a2o = 26
+a1o = 19
+a2o = 13
 b1o = 5
 b2o = 6
 
-red = 13
+red = 26
 green = 25
 blue = 12
 
@@ -59,10 +59,12 @@ def firstmotorcounterclockwise(rotations, duration):
     m.rotateccw(rotations, duration)
 
 def secondmotorclockwise(rotations, duration):
-    mtwo.rotatecw(rotations, duration)
+    #mtwo.rotatecw(rotations, duration)
+    pass
 
 def secondmotorcounterclockwise(rotations, duration):
-    mtwo.rotateccw(rotations, duration)
+    #mtwo.rotateccw(rotations, duration)
+    pass
 
 def lights():
     l.lights()
