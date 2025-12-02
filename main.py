@@ -241,6 +241,7 @@ def wait_for_threads(t1, t2, t3, message):
     motorsrunning = False
     mindfulness_message.value = message
     mixer.music.load(audiofiles[message])
+    mixer.music.set_volume(0.7)
     mixer.music.play()
     l.off()
     mindfulness_message.value = "Welcome to Everspin"
