@@ -241,6 +241,7 @@ def wait_for_threads(t1, t2, t3, message):
     t1.join()
     t2.join()
     t3.join()
+    duration = time.time()-t
     global motorsrunning
     global t
     motorsrunning = False
@@ -250,7 +251,6 @@ def wait_for_threads(t1, t2, t3, message):
     mixer.music.play()
     l.off()
     mindfulness_message.value = "Welcome to Everspin"
-    duration = time.time()-t
 
 #Stops the program from triggering the wheel based on the distance sensor. Distance is still measured
 def stopupdating():
