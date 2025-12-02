@@ -18,6 +18,8 @@ from light import light
 updating = False
 motorsrunning = False
 
+t = 0
+
 message1 = "Thank you for carrying everything I couldn't. You've taken me farther than I ever imagined."
 message2 = "You did the best you could with the understanding and tools you had then. Growth doesn't erase you; it honors you."
 message3 = "I'm here with you. Let's take things one breath, one step at a time."
@@ -94,6 +96,8 @@ def blue():
 #Start the threads for running the two motors and the LEDs and calls the wait_for_threads function
 def activate(t1, t2, t3, message):
     mindfulness_message.value = "Wheels are turning"
+    global t
+    t = time.time()
     t1.start()
     t2.start()
     t3.start()
@@ -238,6 +242,7 @@ def wait_for_threads(t1, t2, t3, message):
     t2.join()
     t3.join()
     global motorsrunning
+    global t
     motorsrunning = False
     mindfulness_message.value = message
     mixer.music.load(audiofiles[message])
@@ -245,6 +250,7 @@ def wait_for_threads(t1, t2, t3, message):
     mixer.music.play()
     l.off()
     mindfulness_message.value = "Welcome to Everspin"
+    duration = time.time()-t
 
 #Stops the program from triggering the wheel based on the distance sensor. Distance is still measured
 def stopupdating():
@@ -259,6 +265,7 @@ def startupdating():
 
 #Runs GPIO.cleanup() and ends the program
 def do_this_when_closed():
+    #This should additionally export the CSV file
     GPIO.cleanup()
     app.destroy()
 
