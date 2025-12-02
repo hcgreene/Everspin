@@ -3,6 +3,7 @@ import numpy as np
 import RPi.GPIO as GPIO
 from guizero import App, PushButton, Text
 import threading
+from pygame import mixer
 
 
 # Raspberry Pi IP Address 10.160.137.201
@@ -25,6 +26,16 @@ message3 = "I'm here with you. Let's take things one breath, one step at a time.
 message4 = "It's okay to be a work in progress. Your present moments don't have to be perfect to be meaningful."
 message5 = "I'm proud of you. The choices you're making now are building the life I get to enjoy."
 message6 = "You don't need to predict the path. Just trust that you'll grow into the strength and clarity needed when the time comes."
+
+audiofiles = {
+    message1: 'message1.mp3',
+    message2: 'message2.mp3',
+    message3: 'message3.mp3',
+    message4: 'message4.mp3',
+    message5: 'message5.mp3',
+    message6: 'message6.mp3'
+}
+mixer.init()
 
 a1i = 17
 a2i = 27
@@ -234,7 +245,11 @@ def wait_for_threads(t1, t2, t3, message):
     global t
     motorsrunning = False
     mindfulness_message.value = message
+    mixer.music.load(audiofiles[message])
+    mixer.music.set_volume(0.7)
+    mixer.music.play()
     l.off()
+    mindfulness_message.value = "Welcome to Everspin"
     duration = time.time()-t
 
 #Stops the program from triggering the wheel based on the distance sensor. Distance is still measured
