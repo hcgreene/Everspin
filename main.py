@@ -1,7 +1,7 @@
 import time
 import numpy as np
 import RPi.GPIO as GPIO
-from guizero import App, PushButton, Text
+from guizero import App, PushButton, Text, Box, TextBox
 import threading
 from pygame import mixer
 import csv
@@ -19,7 +19,7 @@ updating = False
 motorsrunning = False
 dist = 0
 
-activation_count = 0
+activation_count = 1
 csv_file = 'outputrecords.csv'
 t = 0
 
@@ -255,7 +255,7 @@ def wait_for_threads(t1, t2, t3, message, behavior):
     mindfulness_message.value = message
     log_activation(dist, behavior, duration)
     mixer.music.load(audiofiles[message])
-    mixer.music.set_volume(0.7)
+    mixer.music.set_volume(0.1) #CHANGE THIS BACK
     mixer.music.play()
     l.off()
 
@@ -277,20 +277,21 @@ def do_this_when_closed():
     app.destroy()
 
 def log_activation(distance, behavior, duration):
-    behaviormapping = [[], ['CCW', 10, 'CW', 5, 'blue'], ['CCW', 5, 'CW', 10, 'blue'], ['CW', 5, 'CCW', 10, 'green'], ['CW', 10, 'CCW', 5, 'green'], ['CW', 10, 'CW', 5, 'red'], ['CCW', 5, 'CCW', 10, 'red']]
+    behaviormapping = [[], ['CW', 10, 'CW', 5, 'blue'], ['CW', 5, 'CW', 10, 'blue'], ['CCW', 5, 'CCW', 10, 'green'], ['CCW', 10, 'CCW', 5, 'green'], ['CCW', 10, 'CW', 5, 'red'], ['CW', 5, 'CCW', 10, 'red']]
     im_direction = behaviormapping[behavior][0]
-    om_direction = behaviormapping[behavior][1]
-    im_count = behaviormapping[behavior][2]
+    im_count = behaviormapping[behavior][1]
+    om_direction = behaviormapping[behavior][2]
     om_count = behaviormapping[behavior][3]
     color = behaviormapping[behavior][4]
 
-    whatjusthappened = f"Activated at a distance of {distance:.3f} --> Behavior {behavior} --> Inner motor rotated {im_count} times {im_direction}. Outer motor rotated {om_count} times {om_direction}. The LEDs lit up {color}."
+    whatjusthappened = f"Activated at a distance of {distance:.3f} m --> Behavior {behavior} --> Inner motor rotated {im_count} times {im_direction}. Outer motor rotated {om_count} times {om_direction}. The LEDs lit up {color}."
     activation_record.value = whatjusthappened
 
     global activation_count
-    with open(csv_file, mode="w", newline="") as file:
+    with open(csv_file, mode="a", newline="") as file:
         writer = csv.writer(file)
         writer.writerow([activation_count, distance, f"Behavior number {behavior}", im_direction, om_direction, im_count, om_count, color, duration])
+    activation_count +=1
 
 #Main code for the GUI of the program
 
@@ -298,10 +299,58 @@ with open(csv_file, mode="w", newline="") as file:
     writer = csv.writer(file)
     writer.writerow(["Activation #", "Distance (m)", "Behavior", "Inner Motor Direction", "Inner Motor Rotations", "Outer Motor Direction", "Outer Motor Rotations", "LED Color", "Duration"])
 
-app = App(title="Everspin")
-button = PushButton(app, text="start", command=startupdating)
-button = PushButton(app, text="stop", command=stopupdating)
-mindfulness_message = Text(app, text="Welcome to Everspin", size=20)
-activation_record = Text(app, text="", size = 10)
+
+
+
+app = App(title="Everspin", bg="#1e1e1e")
+app.padding = 40
+
+main_box = Box(app, align="top", width="fill", height="fill")
+
+mindfulness_message = TextBox(main_box, text="Welcome to Everspin", width=50, height=3, multiline=True)
+mindfulness_message.bg = "#1e1e1e"
+mindfulness_message.text_color = "white"
+mindfulness_message.font = "Helvetica"
+mindfulness_message.text_size = 36
+
+button_box = Box(main_box, layout="grid", align="top")
+button_box.spacing = 50 
+
+start_button = PushButton(button_box, text="Start", grid=[0,0], command=startupdating)
+stop_button = PushButton(button_box, text="Stop", grid=[1,0], command=stopupdating)
+
+for btn, color in [(start_button, "#28a745"), (stop_button, "#dc3545")]:
+    btn.bg = color
+    btn.text_color = "white"
+    btn.font = "Roboto"
+    btn.text_size = 20
+    btn.padx = 50
+    btn.pady = 20
+
+activation_record = TextBox(main_box, text="", width=50, height=5, multiline=True, visible=False)
+activation_record.bg = "#1e1e1e"
+activation_record.text_color = "white"
+activation_record.font = "Helvetica"
+activation_record.text_size = 18
+
+
+def toggle_activation_info():
+    if activation_record.visible:
+        activation_record.visible = False
+        toggle_button.text = "Show Details"
+    else:
+        if activation_record.value.strip() == "":
+            activation_record.value = "No data to display yet"
+        activation_record.visible = True
+        toggle_button.text = "Hide Details"
+
+toggle_button = PushButton(app, text="Show Details", command=toggle_activation_info)
+toggle_button.bg = "#007bff"
+toggle_button.text_color = "white"
+toggle_button.font = "Roboto"
+toggle_button.text_size = 20
+toggle_button.padx = 50
+toggle_button.pady = 20
+
 app.when_closed = do_this_when_closed
 app.display()
