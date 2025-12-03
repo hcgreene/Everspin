@@ -4,7 +4,7 @@ import RPi.GPIO as GPIO
 from guizero import App, PushButton, Text
 import threading
 from pygame import mixer
-
+import csv
 
 # Raspberry Pi IP Address 10.160.137.201
 
@@ -17,7 +17,10 @@ from light import light
 #Flags
 updating = False
 motorsrunning = False
+dist = 0
 
+activation_count = 0
+csv_file = 'outputrecords.csv'
 t = 0
 
 message1 = "Thank you for carrying everything I couldn't. You've taken me farther than I ever imagined."
@@ -90,18 +93,18 @@ def red():
 def green():
     l.green()
 
-def blue():
+def blue(): 
     l.blue()
 
 #Start the threads for running the two motors and the LEDs and calls the wait_for_threads function
-def activate(t1, t2, t3, message):
+def activate(t1, t2, t3, message, behavior):
     mindfulness_message.value = "Wheels are turning"
     global t
     t = time.time()
     t1.start()
     t2.start()
     t3.start()
-    threading.Thread(target=wait_for_threads, args=(t1, t2, t3, message)).start()
+    threading.Thread(target=wait_for_threads, args=(t1, t2, t3, message, behavior)).start()
 
 #How the wheel should behave when activated at the first height
 #The first motor (inner) will rotate 10 times counter clockwise
@@ -113,7 +116,7 @@ def behavior1():
     t2 = threading.Thread(target=secondmotorclockwise, args = (5, 30,))
     t3 = threading.Thread(target=blue, args = ())
 
-    activate(t1, t2, t3, message1)
+    activate(t1, t2, t3, message1, 1)
 
 #Second height
 #Inner motor 5 times counter clockwise
@@ -125,7 +128,7 @@ def behavior2():
     t2 = threading.Thread(target=secondmotorclockwise, args = (10, 30,))
     t3 = threading.Thread(target=blue, args = ())
 
-    activate(t1, t2, t3, message2)
+    activate(t1, t2, t3, message2, 2)
 
 #Third height
 #Inner motor 5 times clockwise
@@ -137,7 +140,7 @@ def behavior3():
     t2 = threading.Thread(target=secondmotorcounterclockwise, args = (10, 30,))
     t3 = threading.Thread(target=green, args = ())
 
-    activate(t1, t2, t3, message3)
+    activate(t1, t2, t3, message3, 3)
 
 #Fourth height
 #Inner motor 10 times clockwise
@@ -149,7 +152,7 @@ def behavior4():
     t2 = threading.Thread(target=secondmotorcounterclockwise, args = (5, 30,))
     t3 = threading.Thread(target=green, args = ())
 
-    activate(t1, t2, t3, message4)
+    activate(t1, t2, t3, message4, 4)
 
 #Fifth height
 #Inner motor 10 times clockwise
@@ -161,7 +164,7 @@ def behavior5():
     t2 = threading.Thread(target=secondmotorclockwise, args = (5, 30,))
     t3 = threading.Thread(target=red, args = ())
 
-    activate(t1, t2, t3, message5)
+    activate(t1, t2, t3, message5, 5)
 
 #Sixth height
 #Inner motor 5 times counter clockwise
@@ -173,7 +176,7 @@ def behavior6():
     t2 = threading.Thread(target=secondmotorcounterclockwise, args = (10, 30,))
     t3 = threading.Thread(target=red, args = ())
 
-    activate(t1, t2, t3, message6)
+    activate(t1, t2, t3, message6, 6)
 
 #Function to trigger the distance sensor and convert the time to distance based on the speed of sound
 def getdistance():
@@ -204,6 +207,8 @@ def updatedistance():
         
         global motorsrunning
         if(not motorsrunning):
+            global dist
+            dist = distance
             if(distance < 0.147):
                 print("behavior 1")
                 motorsrunning = True
@@ -237,20 +242,22 @@ def updatedistance():
         app.after(500, updatedistance)
 
 #Manages the timing of the threads and updates the mindfulness message and lights after the wheel is done spinning
-def wait_for_threads(t1, t2, t3, message):
+def wait_for_threads(t1, t2, t3, message, behavior):
     t1.join()
     t2.join()
     t3.join()
+
+    global t
     duration = time.time()-t
     global motorsrunning
-    global t
+    global dist
     motorsrunning = False
     mindfulness_message.value = message
+    log_activation(dist, behavior, duration)
     mixer.music.load(audiofiles[message])
     mixer.music.set_volume(0.7)
     mixer.music.play()
     l.off()
-    mindfulness_message.value = "Welcome to Everspin"
 
 #Stops the program from triggering the wheel based on the distance sensor. Distance is still measured
 def stopupdating():
@@ -269,10 +276,32 @@ def do_this_when_closed():
     GPIO.cleanup()
     app.destroy()
 
+def log_activation(distance, behavior, duration):
+    behaviormapping = [[], ['CCW', 10, 'CW', 5, 'blue'], ['CCW', 5, 'CW', 10, 'blue'], ['CW', 5, 'CCW', 10, 'green'], ['CW', 10, 'CCW', 5, 'green'], ['CW', 10, 'CW', 5, 'red'], ['CCW', 5, 'CCW', 10, 'red']]
+    im_direction = behaviormapping[behavior][0]
+    om_direction = behaviormapping[behavior][1]
+    im_count = behaviormapping[behavior][2]
+    om_count = behaviormapping[behavior][3]
+    color = behaviormapping[behavior][4]
+
+    whatjusthappened = f"Activated at a distance of {distance:.3f} --> Behavior {behavior} --> Inner motor rotated {im_count} times {im_direction}. Outer motor rotated {om_count} times {om_direction}. The LEDs lit up {color}."
+    activation_record.value = whatjusthappened
+
+    global activation_count
+    with open(csv_file, mode="w", newline="") as file:
+        writer = csv.writer(file)
+        writer.writerow([activation_count, distance, f"Behavior number {behavior}", im_direction, om_direction, im_count, om_count, color, duration])
+
 #Main code for the GUI of the program
+
+with open(csv_file, mode="w", newline="") as file:
+    writer = csv.writer(file)
+    writer.writerow(["Activation #", "Distance (m)", "Behavior", "Inner Motor Direction", "Inner Motor Rotations", "Outer Motor Direction", "Outer Motor Rotations", "LED Color", "Duration"])
+
 app = App(title="Everspin")
 button = PushButton(app, text="start", command=startupdating)
 button = PushButton(app, text="stop", command=stopupdating)
 mindfulness_message = Text(app, text="Welcome to Everspin", size=20)
+activation_record = Text(app, text="", size = 10)
 app.when_closed = do_this_when_closed
 app.display()
