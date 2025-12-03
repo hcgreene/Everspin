@@ -1,7 +1,7 @@
 import time
 import numpy as np
 import RPi.GPIO as GPIO
-from guizero import App, PushButton, Text
+from guizero import App, PushButton, Text, Box
 import threading
 from pygame import mixer
 import csv
@@ -298,10 +298,48 @@ with open(csv_file, mode="w", newline="") as file:
     writer = csv.writer(file)
     writer.writerow(["Activation #", "Distance (m)", "Behavior", "Inner Motor Direction", "Inner Motor Rotations", "Outer Motor Direction", "Outer Motor Rotations", "LED Color", "Duration"])
 
-app = App(title="Everspin")
-button = PushButton(app, text="start", command=startupdating)
-button = PushButton(app, text="stop", command=stopupdating)
-mindfulness_message = Text(app, text="Welcome to Everspin", size=20)
-activation_record = Text(app, text="", size = 10)
+
+
+
+app = App(title="Everspin", bg="#1e1e1e")
+app.padding = 40
+
+mindfulness_message = Text(app, text="Welcome to Everspin", size=36, color="white", font="Helvetica")
+
+button_box = Box(app, layout="grid", align="top")
+button_box.spacing = 50  # Space between buttons
+
+start_button = PushButton(button_box, text="Start", grid=[0,0], command=startupdating)
+stop_button = PushButton(button_box, text="Stop", grid=[1,0], command=stopupdating)
+
+for btn, color in [(start_button, "#28a745"), (stop_button, "#dc3545")]:
+    btn.bg = color
+    btn.text_color = "white"
+    btn.font = "Helvetica"
+    btn.text_size = 20
+    btn.padx = 50
+    btn.pady = 20
+
+activation_record = Text(app, text="", size=18, color="white", font="Helvetica", visible=False)
+
+def toggle_activation_info():
+    if activation_record.visible:
+        activation_record.visible = False
+        toggle_button.text = "Show Details"
+    else:
+        if activation_record.value.strip() == "":
+            activation_record.value = "No data to display yet"
+        activation_record.visible = True
+        toggle_button.text = "Hide Details"
+
+toggle_button = PushButton(app, text="Show Details", command=toggle_activation_info)
+toggle_button.bg = "#007bff"
+toggle_button.text_color = "white"
+toggle_button.font = "Helvetica"
+toggle_button.text_size = 20
+toggle_button.padx = 50
+toggle_button.pady = 20
+
+
 app.when_closed = do_this_when_closed
 app.display()
