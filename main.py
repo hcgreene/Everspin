@@ -255,7 +255,7 @@ def wait_for_threads(t1, t2, t3, message, behavior):
     mindfulness_message.value = message
     log_activation(dist, behavior, duration)
     mixer.music.load(audiofiles[message])
-    mixer.music.set_volume(0.7)
+    mixer.music.set_volume(0.1) #CHANGE THIS BACK
     mixer.music.play()
     l.off()
 
@@ -279,16 +279,16 @@ def do_this_when_closed():
 def log_activation(distance, behavior, duration):
     behaviormapping = [[], ['CCW', 10, 'CW', 5, 'blue'], ['CCW', 5, 'CW', 10, 'blue'], ['CW', 5, 'CCW', 10, 'green'], ['CW', 10, 'CCW', 5, 'green'], ['CW', 10, 'CW', 5, 'red'], ['CCW', 5, 'CCW', 10, 'red']]
     im_direction = behaviormapping[behavior][0]
-    om_direction = behaviormapping[behavior][1]
-    im_count = behaviormapping[behavior][2]
+    im_count = behaviormapping[behavior][1]
+    om_direction = behaviormapping[behavior][2]
     om_count = behaviormapping[behavior][3]
     color = behaviormapping[behavior][4]
 
-    whatjusthappened = f"Activated at a distance of {distance:.3f} --> Behavior {behavior} --> Inner motor rotated {im_count} times {im_direction}. Outer motor rotated {om_count} times {om_direction}. The LEDs lit up {color}."
+    whatjusthappened = f"Activated at a distance of {distance:.3f} m --> Behavior {behavior} --> Inner motor rotated {im_count} times {im_direction}. Outer motor rotated {om_count} times {om_direction}. The LEDs lit up {color}."
     activation_record.value = whatjusthappened
 
     global activation_count
-    with open(csv_file, mode="w", newline="") as file:
+    with open(csv_file, mode="a", newline="") as file:
         writer = csv.writer(file)
         writer.writerow([activation_count, distance, f"Behavior number {behavior}", im_direction, om_direction, im_count, om_count, color, duration])
 
